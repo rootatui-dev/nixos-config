@@ -3,8 +3,13 @@
   flake.nixosModules.msiCrosshairConfiguration = { config, pkgs, ... }: {
     imports = [
       self.nixosModules.msiCrosshairHardware
-      self.nixosModules.niri
+      self.nixosModules.allFeatures
     ];
+
+    features.niri.enable = true;
+    features.noctalia.enable = true;
+    features.kitty.enable = true;
+    features.yazi.enable = true;
 
     # Bootloader.
     boot.loader.systemd-boot.enable = true;
@@ -87,7 +92,6 @@
       vim
       wget
       git
-      alacritty
       sl
       tree
     ];

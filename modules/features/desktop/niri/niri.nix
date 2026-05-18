@@ -1,12 +1,5 @@
 { self, inputs, ... }: { 
 
-  flake.nixosModules.niri = { pkgs, lib, ... }: {
-    programs.niri = {
-      enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
-    };
-  };
-
   perSystem = { pkgs, lib, self', ... }: {
     
     packages.myNiri = inputs.wrapper-modules.wrappers.niri.wrap {
@@ -29,12 +22,24 @@
         binds = {
           "Mod+S".spawn-sh =
             "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
-          "Mod+T".spawn-sh = lib.getExe pkgs.kitty;
+          "Mod+T".spawn-sh = lib.getExe self'.packages.myKitty;
           "Mod+Q".close-window = null;
         };
-      };  
+      }; 
+ 
     };
   
+  };
+
+  flake.nixosModules.niri = { config, pkgs, lib, ... }: {
+    options.features.niri.enable = lib.mkEnableOption "Niri";
+
+    config = lib.mkIf config.features.niri.enable {
+      programs.niri = {
+        enable = true;
+        package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
+      };
+    };
   };
  
 }
